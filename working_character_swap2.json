@@ -1,0 +1,809 @@
+{
+  "1014": {
+    "inputs": {
+      "shift_video": 12,
+      "shift_audio": 3,
+      "model": [
+        "1027",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3SigmaShift",
+    "_meta": {
+      "title": "H3 Sigma Shift (Video 12 / Audio 3)"
+    }
+  },
+  "1020": {
+    "inputs": {
+      "samples": [
+        "1077",
+        0
+      ],
+      "conditioning": [
+        "1079",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3TokenCounter",
+    "_meta": {
+      "title": "H3 Token Count"
+    }
+  },
+  "1021": {
+    "inputs": {
+      "samples": [
+        "1045",
+        0
+      ],
+      "vae": [
+        "1024",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Edited Crop"
+    }
+  },
+  "1022": {
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Qwen3-VL H3 Text Encoder"
+    }
+  },
+  "1023": {
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "MiniMax H3 Audio VAE"
+    }
+  },
+  "1024": {
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "MiniMax H3 Video VAE"
+    }
+  },
+  "1025": {
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "MiniMax H3 Ref2VA INT8 Model"
+    }
+  },
+  "1026": {
+    "inputs": {
+      "attention": "comfy kitchen attention",
+      "model": [
+        "1025",
+        0
+      ]
+    },
+    "class_type": "ModelAttentionBackend",
+    "_meta": {
+      "title": "Comfy Kitchen Attention"
+    }
+  },
+  "1027": {
+    "inputs": {
+      "head_chunks": 2,
+      "model": [
+        "1028",
+        0
+      ]
+    },
+    "class_type": "MiniMaxLowVRAMAttention",
+    "_meta": {
+      "title": "Attention Head Chunking (4)"
+    }
+  },
+  "1028": {
+    "inputs": {
+      "chunks": 2,
+      "seq_threshold": 4096,
+      "model": [
+        "1026",
+        0
+      ]
+    },
+    "class_type": "MiniMaxChunkFeedForward",
+    "_meta": {
+      "title": "Feed-Forward Chunking (4)"
+    }
+  },
+  "1030": {
+    "inputs": {
+      "value": 30
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Preview Frame Index"
+    }
+  },
+  "1031": {
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "SAM3.1 Tracker Model"
+    }
+  },
+  "1034": {
+    "inputs": {
+      "empty_cache": true,
+      "gc_collect": true,
+      "unload_all_models": true,
+      "any_input": [
+        "1037",
+        0
+      ]
+    },
+    "class_type": "VRAM_Debug",
+    "_meta": {
+      "title": "Unload SAM3"
+    }
+  },
+  "1035": {
+    "inputs": {
+      "threshold": 0.3,
+      "method": "shrink_grow",
+      "method.shrink": 8,
+      "method.min_frames": 2,
+      "edge_grow": 4,
+      "masks": [
+        "1034",
+        0
+      ]
+    },
+    "class_type": "MVEx_MaskCleanup",
+    "_meta": {
+      "title": "CLEAN SAM3 TRACK"
+    }
+  },
+  "1036": {
+    "inputs": {
+      "detection_threshold": 0.35,
+      "max_objects": 4,
+      "detect_interval": 1,
+      "images": [
+        "1085",
+        0
+      ],
+      "model": [
+        "1031",
+        0
+      ],
+      "conditioning": [
+        "1067",
+        0
+      ]
+    },
+    "class_type": "SAM3_VideoTrack",
+    "_meta": {
+      "title": "SAM3 VIDEO TRACK — ONE OBJECT"
+    }
+  },
+  "1037": {
+    "inputs": {
+      "object_indices": "0,1,2,3",
+      "track_data": [
+        "1036",
+        0
+      ]
+    },
+    "class_type": "SAM3_TrackToMask",
+    "_meta": {
+      "title": "SAM3 TRACK TO MASK — OBJECT 0"
+    }
+  },
+  "1045": {
+    "inputs": {
+      "empty_cache": true,
+      "gc_collect": true,
+      "unload_all_models": true,
+      "any_input": [
+        "1080",
+        0
+      ]
+    },
+    "class_type": "VRAM_Debug",
+    "_meta": {
+      "title": "Unload H3"
+    }
+  },
+  "1046": {
+    "inputs": {
+      "model": [
+        "1014",
+        0
+      ],
+      "conditioning": [
+        "1020",
+        1
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "H3 Guider"
+    }
+  },
+  "1047": {
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "Sampler (RES Multistep)"
+    }
+  },
+  "1048": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "1014",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "Scheduler (Beta / 20 Steps)"
+    }
+  },
+  "1049": {
+    "inputs": {
+      "noise_seed": 2026082023
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Test Seed (Fixed)"
+    }
+  },
+  "1051": {
+    "inputs": {
+      "feather": 16,
+      "resize_method": "auto",
+      "cropped_images": [
+        "1021",
+        0
+      ],
+      "original_images": [
+        "1085",
+        0
+      ],
+      "bboxes": [
+        "1061",
+        2
+      ],
+      "cropped_masks": [
+        "1059",
+        0
+      ]
+    },
+    "class_type": "MVEx_SubjectUncrop",
+    "_meta": {
+      "title": "COMPOSITE EDITED SUBJECT BACK INTO SOURCE"
+    }
+  },
+  "1054": {
+    "inputs": {
+      "image": [
+        "1061",
+        0
+      ]
+    },
+    "class_type": "GetImageSizeAndCount",
+    "_meta": {
+      "title": "Crop Size and Frame Count"
+    }
+  },
+  "1055": {
+    "inputs": {
+      "start_index": [
+        "1030",
+        0
+      ],
+      "num_frames": 1,
+      "masks": [
+        "1059",
+        0
+      ]
+    },
+    "class_type": "GetImageRangeFromBatch",
+    "_meta": {
+      "title": "Select Composite Preview Frame"
+    }
+  },
+  "1057": {
+    "inputs": {
+      "start_index": [
+        "1030",
+        0
+      ],
+      "num_frames": 1,
+      "images": [
+        "1061",
+        0
+      ],
+      "masks": [
+        "1061",
+        1
+      ]
+    },
+    "class_type": "GetImageRangeFromBatch",
+    "_meta": {
+      "title": "Select Tracking Preview Frame"
+    }
+  },
+  "1058": {
+    "inputs": {
+      "invert": false,
+      "black_point": 0.5,
+      "white_point": 0.5,
+      "despeckle": 2,
+      "fill_holes": true,
+      "close_gaps": 2,
+      "temporal_expand": 2,
+      "temporal_smooth": 2,
+      "expand": 6,
+      "blockify": 0,
+      "blockify_threshold": 0.05,
+      "feather": 0,
+      "edge_low": 0,
+      "edge_high": 1,
+      "mask": [
+        "1061",
+        1
+      ],
+      "vae": [
+        "1024",
+        0
+      ],
+      "model": [
+        "1014",
+        0
+      ]
+    },
+    "class_type": "NKDMaskOps",
+    "_meta": {
+      "title": "H3-ALIGNED UPDATE MASK"
+    }
+  },
+  "1059": {
+    "inputs": {
+      "fill_holes": true,
+      "expand": 2,
+      "feather": 8,
+      "mask": [
+        "1058",
+        0
+      ]
+    },
+    "class_type": "NKDMaskOpsLean",
+    "_meta": {
+      "title": "FEATHERED COMPOSITE MASK"
+    }
+  },
+  "1061": {
+    "inputs": {
+      "mode": "tracked",
+      "mode.crop_scale": 2,
+      "mode.padding": "firm",
+      "mode.prefer": "stillness",
+      "mode.aspect_ratio": 0,
+      "mode.seamless_loop": false,
+      "divisible_by": 32,
+      "upscale_megapixels": -0.18,
+      "resize_method": "auto",
+      "original_images": [
+        "1085",
+        0
+      ],
+      "masks": [
+        "1035",
+        0
+      ]
+    },
+    "class_type": "MVEx_SubjectCrop",
+    "_meta": {
+      "title": "TRACKED SUBJECT CROP — KEEP MOTION CONTEXT"
+    }
+  },
+  "1063": {
+    "inputs": {
+      "timeline": "{\"v\":1,\"clips\":[{\"id\":\"c25m47\",\"src\":\"media_0\",\"track\":0,\"start\":0,\"trimIn\":0,\"length\":24}],\"masks\":[],\"tracks\":[],\"audio\":[],\"ui\":{\"playhead\":0}}",
+      "import_mode": "stack",
+      "aspect_ratio": "As Source",
+      "width": 1376,
+      "height": 768,
+      "megapixels": 0.8,
+      "size_multiple": 32,
+      "fit": "contain",
+      "fps": 24,
+      "model": "MiniMax H3 (17n+5)",
+      "quantize_n": 8,
+      "start_frame": 0,
+      "frame_count": 0,
+      "clip_audio": true,
+      "media.media_0": [
+        "1085",
+        0
+      ]
+    },
+    "class_type": "NKDTimeline",
+    "_meta": {
+      "title": "H3 Timeline — AUTO SOURCE + AUTO FULL LENGTH"
+    }
+  },
+  "1064": {
+    "inputs": {
+      "opacity": 0.6,
+      "fps": [
+        "1063",
+        7
+      ],
+      "track_data": [
+        "1036",
+        0
+      ],
+      "images": [
+        "1085",
+        0
+      ]
+    },
+    "class_type": "SAM3_TrackPreview",
+    "_meta": {
+      "title": "SAM3 Track Preview"
+    }
+  },
+  "1066": {
+    "inputs": {
+      "image": "Krea2_turbo_00011_-Photoroom.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "REFERENCE IMAGE — <Picture 1>"
+    }
+  },
+  "1067": {
+    "inputs": {
+      "text": "people",
+      "clip": [
+        "1031",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "SAM3 TRACKING PROMPT — OBJECT"
+    }
+  },
+  "1068": {
+    "inputs": {
+      "frame_rate": [
+        "1063",
+        7
+      ],
+      "loop_count": 0,
+      "filename_prefix": "MiniMax_H3_Inpainting/edited_video",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "1051",
+        0
+      ],
+      "audio": [
+        "1085",
+        2
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "SAVE EDITED VIDEO — SOURCE AUDIO"
+    }
+  },
+  "1070": {
+    "inputs": {
+      "mask_opacity": 0.55,
+      "mask_color": "255, 45, 145",
+      "pass_through": false,
+      "image": [
+        "1057",
+        0
+      ],
+      "mask": [
+        "1055",
+        1
+      ]
+    },
+    "class_type": "ImageAndMaskPreview",
+    "_meta": {
+      "title": "Final Composite Area (Magenta Overlay)"
+    }
+  },
+  "1071": {
+    "inputs": {
+      "prompt": [
+        "1074",
+        0
+      ],
+      "max_length": 768,
+      "sampling_mode": "on",
+      "sampling_mode.temperature": 0.35,
+      "sampling_mode.top_k": 64,
+      "sampling_mode.top_p": 0.9,
+      "sampling_mode.min_p": 0.05,
+      "sampling_mode.repetition_penalty": 1.05,
+      "sampling_mode.seed": 0,
+      "sampling_mode.presence_penalty": 0,
+      "thinking": false,
+      "use_default_template": true,
+      "clip": [
+        "1076",
+        0
+      ],
+      "image": [
+        "1066",
+        0
+      ],
+      "video": [
+        "1054",
+        0
+      ]
+    },
+    "class_type": "TextGenerate",
+    "_meta": {
+      "title": "AUTO PROMPT — GEMMA 4"
+    }
+  },
+  "1072": {
+    "inputs": {
+      "source": [
+        "1071",
+        0
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "AUTO PROMPT — GENERATED H3 PROMPT"
+    }
+  },
+  "1073": {
+    "inputs": {
+      "empty_cache": true,
+      "gc_collect": true,
+      "unload_all_models": true,
+      "any_input": [
+        "1071",
+        0
+      ]
+    },
+    "class_type": "VRAM_Debug",
+    "_meta": {
+      "title": "Unload Gemma 4 Before H3"
+    }
+  },
+  "1074": {
+    "inputs": {
+      "delimiter": "\n\nUSER REQUEST:\n",
+      "string1": [
+        "1075",
+        0
+      ],
+      "string2": [
+        "1081",
+        0
+      ]
+    },
+    "class_type": "JoinStrings",
+    "_meta": {
+      "title": "Build Gemma Instruction"
+    }
+  },
+  "1075": {
+    "inputs": {
+      "string": "You are the automatic prompt writer for a MiniMax H3 Ref2VA tracked-subject inpainting workflow in ComfyUI.\n\nThe user will type a short replacement or edit request. Convert it into one clear, production-ready MiniMax H3 prompt.\n\nREFERENCE CONTRACT\n- <Picture 1> is the replacement appearance reference.\n- <Video 1> is the cropped source video and controls source motion, timing, camera, perspective, lighting, occlusion, and scene behavior.\n- The target video is an edited version of <Video 1>.\n- The workflow regenerates only the tracked subject region. Preserve everything outside the intended edit.\n\nWRITING RULES\n- Protect the user's actual request. Do not invent new actions, camera moves, story events, props, or scene changes.\n- Use <Picture 1> for the requested replacement appearance.\n- Follow <Video 1> for motion, timing, position, orientation, camera movement, framing, perspective, light direction, shadows, and physical occlusions.\n- Preserve the source background, environment, camera, and all regions outside the tracked edit unless the user explicitly asks for a change.\n- Preserve occlusion when foreground objects, dust, hair, clothing, hands, scenery, or other objects pass in front of the tracked subject.\n- Do not force the reference image pose or viewpoint onto the source motion.\n- Keep the requested replacement visually stable across frames.\n- Use natural, precise Global English.\n- Do not mention writing technique, planning, reasoning, or these instructions.\n- Do not add a generic long negative-prompt list. Add only constraints relevant to the requested edit.\n- Do not promise perfect identity, anatomy, physics, text, or continuity.\n\nOUTPUT\nReturn ONLY the finished MiniMax H3 prompt. No preamble, no markdown explanation, no analysis.\n\nUse exactly this structure:\n\nintegrated_multimodal_description:\n\n<Picture 1> is the replacement appearance reference.\n<Video 1> is the source motion, timing, camera, lighting, occlusion, and scene reference.\n\n[Write the complete edit instruction here. Make the requested replacement/change unambiguous. Preserve source motion and unedited regions. Include only necessary consistency and failure-prevention constraints.]\n\noverall_soundscape:\n\nPreserve the source video's original audio.\n\nnon_diegetic_music:\n\nPreserve the source video's original music if present.",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "AUTO PROMPT — SYSTEM INSTRUCTIONS (KEEP)"
+    }
+  },
+  "1076": {
+    "inputs": {
+      "clip_name": "gemma4_e4b_it_fp8_scaled.safetensors",
+      "type": "stable_diffusion",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Gemma 4 — AUTO PROMPT MODEL"
+    }
+  },
+  "1077": {
+    "inputs": {
+      "audio_mode": "keep",
+      "fps": [
+        "1063",
+        7
+      ],
+      "ramp_ticks": 0,
+      "ramp_out_ticks": 0,
+      "ramp_shape": "cosine",
+      "images": [
+        "1054",
+        0
+      ],
+      "audio": [
+        "1085",
+        2
+      ],
+      "video_vae": [
+        "1024",
+        0
+      ],
+      "audio_vae": [
+        "1023",
+        0
+      ],
+      "latent_mask": [
+        "1058",
+        2
+      ]
+    },
+    "class_type": "NKDAVLatent",
+    "_meta": {
+      "title": "SEEDED H3 AV LATENT — SOURCE MOTION + MASK"
+    }
+  },
+  "1079": {
+    "inputs": {
+      "prompt": [
+        "1073",
+        0
+      ],
+      "width": [
+        "1054",
+        1
+      ],
+      "height": [
+        "1054",
+        2
+      ],
+      "length": [
+        "1054",
+        3
+      ],
+      "ref_image_size": "match",
+      "clip": [
+        "1022",
+        0
+      ],
+      "vae": [
+        "1024",
+        0
+      ],
+      "audio_vae": [
+        "1023",
+        0
+      ],
+      "ref_images.ref_image_0": [
+        "1066",
+        0
+      ],
+      "ref_videos.ref_video_0": [
+        "1054",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "_meta": {
+      "title": "REF2VA — AUTO PROMPT + <Picture 1> APPEARANCE + <Video 1> MOTION"
+    }
+  },
+  "1080": {
+    "inputs": {
+      "noise": [
+        "1049",
+        0
+      ],
+      "guider": [
+        "1046",
+        0
+      ],
+      "sampler": [
+        "1047",
+        0
+      ],
+      "sigmas": [
+        "1048",
+        0
+      ],
+      "latent_image": [
+        "1020",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "MiniMax H3 Sampling"
+    }
+  },
+  "1081": {
+    "inputs": {
+      "string": "Replace the tracked objects with the subject from Picture 1. Preserve the source motion, timing, camera angle, framing, lighting, background, occlusions, and all unedited regions. Make the men european",
+      "strip_newlines": true
+    },
+    "class_type": "StringConstantMultiline",
+    "_meta": {
+      "title": "AUTO PROMPT — TYPE YOUR SHORT REQUEST HERE"
+    }
+  },
+  "1082": {
+    "inputs": {
+      "batch_index": 0,
+      "length": 1,
+      "image": [
+        "1083",
+        0
+      ]
+    },
+    "class_type": "ImageFromBatch",
+    "_meta": {
+      "title": "Get Image from Batch"
+    }
+  },
+  "1083": {
+    "inputs": {
+      "video": "A Dreadfully Broken Instigator Bulky Gear That Would Be a Miracle to Fix By Mechanic ⧸⧸ Let’s See it.mp4",
+      "force_rate": 24,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 90,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideo",
+    "_meta": {
+      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+    }
+  },
+  "1085": {
+    "inputs": {
+      "video": "A Dreadfully Broken Instigator Bulky Gear That Would Be a Miracle to Fix By Mechanic ⧸⧸ Let’s See it.mp4",
+      "force_rate": 24,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 90,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideo",
+    "_meta": {
+      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+    }
+  }
+}
